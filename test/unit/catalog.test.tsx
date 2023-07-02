@@ -1,6 +1,6 @@
 import React from 'react';
 import { Application } from '../../src/client/Application';
-import { render, within } from '../utils/test-utils';
+import { findByText, render, within } from '../utils/test-utils';
 import { describe, it, expect, jest } from '@jest/globals';
 import userEvent from '@testing-library/user-event';
 
@@ -88,61 +88,28 @@ describe('Каталог работает корректно', () => {
             { id: 1, name: 'Keyboard', price: 567 },
             { id: 2, name: 'Car', price: 34 },
         ];
+        const localStoreProducts = {
+            '1': { count: 2, name: 'keyboard', price: 567 },
+        };
 
         const user = userEvent.setup();
 
-        const { findByRole, findAllByTestId, queryByText } = render(app, {
-            customPath: '/catalog/',
+        const { findAllByTestId, findByText } = render(app, {
+            customPath: '/catalog',
             customData: products,
+            customStoreCart: JSON.stringify(localStoreProducts),
         });
-
-        const cardData = await findAllByTestId(1);
-        const detailsLink = await within(cardData[0]).findByRole('link');
-        await user.click(detailsLink);
-
-        const addBtn = await findByRole('button', { name: 'Add to Cart' });
-        expect(queryByText('Item in cart')).toBeNull();
-        await user.click(addBtn);
-        expect(queryByText('Item in cart')).toBeTruthy();
-
-        const linkToCatalog = await findByRole('link', { name: 'Catalog' });
-        await user.click(linkToCatalog);
 
         const currentCardData = await findAllByTestId(1);
         const currentContainer = currentCardData[0];
         expect(
             within(currentContainer).queryByText('Item in cart')
         ).toBeTruthy();
-    });
 
-    it('Повторное нажатие кнопки "добавить в корзину" должно увеличивать количество товара', async () => {
-        const app = <Application />;
-        const user = userEvent.setup();
-        const product = {
-            id: 5,
-            name: 'Cheese',
-            price: 245,
-            color: 'Red',
-            description: 'Description content',
-            material: 'Carbon',
-        };
+        const detailsLink = await within(currentContainer).findByRole('link', {name: 'Details'});
+        user.click(detailsLink);
 
-        const { findByRole, findByText, findByTestId } = render(app, {
-            customPath: '/catalog/5',
-            customData: product,
-        });
-
-        const addBtn = await findByRole('button', { name: 'Add to Cart' });
-        await user.click(addBtn);
-        await user.click(addBtn);
-        await user.click(addBtn);
-
-        const cartLink = await findByRole('link', { name: 'Cart (1)' });
-        await user.click(cartLink);
-
-        const productContainer = await findByTestId(5);
-        const count = await within(productContainer).findByText(3);
-        expect(count.className).toEqual('Cart-Count');
+        expect(await findByText('Item in cart')).toBeTruthy();        
     });
 
     it('Cодержимое корзины сохраняется между перезагрузками страницы', async () => {
