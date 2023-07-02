@@ -27,3 +27,7 @@ npm run check:unit --bug=9
 npm run check:e2e --bug=2
 
 ```
+
+## Окружение
+Node версия на которой проводились тесты - v18.12.1
+Если вдруг не работает playwright, попробуйте ввести npm init playwright@latest
