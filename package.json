@@ -4,11 +4,14 @@
   "scripts": {
     "start": "nodemon ./src/server/index.ts",
     "test:unit": "jest",
-    "test:e2e": "node_modules/.bin/hermione",
-    "test:e2e:gui": "node_modules/.bin/hermione gui",
+    "test:e2e": "npx playwright test",
+    "test:e2e:gui": "npx playwright test --ui",
     "test": "npm run test:unit && npm run test:e2e",
     "build": "webpack --mode=production --node-env=production",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "check:unit": "cross-env BUG_ID=$npm_config_bug npm run test:unit",
+    "check:e2e": "cross-env BUG_ID=$npm_config_bug npm run test:e2e",
+    "checkAll": "cross-env BUG_ID=$npm_config_bug npm run test:unit && cross-env BUG_ID=$npm_config_bug npm run test:e2e"
   },
   "dependencies": {
     "@bem-react/classname": "^1.5.12",

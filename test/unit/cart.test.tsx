@@ -8,12 +8,12 @@ describe('Тесты корзины', () => {
     it('В пустой корзине отображается ссылка на каталог', () => {
         const app = <Application />;
 
-        const { getByTestId, getByRole } = render(app);
+        const { getByRole } = render(app);
 
         const link = getByRole('link', { name: 'Cart' });
         fireEvent.click(link);
 
-        const linkToCatalog = getByTestId('link-to-catalog');
+        const linkToCatalog = getByRole('link', {name: 'catalog'});
         expect(linkToCatalog.getAttribute('href')).toBe('/hw/store/catalog');
     });
 
